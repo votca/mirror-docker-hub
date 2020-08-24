@@ -1,0 +1,27 @@
+name: mirror
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The tag'
+
+jobs:
+  mirror:
+    if: github.repository_owner == 'votca'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check tag
+        run: if [[ -z "${{ github.event.inputs.tag }}" ]]; then
+               exit 1
+             fi
+      - name: Login
+        run: echo ${{ secrets.VOTCA_BOT_TOKEN }} | docker login docker.pkg.github.com -u junghans --password-stdin
+      - name: Pull immage 
+        run: docker pull docker pull votca/votca:${{ github.event.inputs.tag }}
+      - name: Retag image
+        run: docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
+      - name: Push image
+        run: docker push docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
