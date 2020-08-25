@@ -20,8 +20,8 @@ jobs:
           fi
       - name: Login
         run: echo ${{ secrets.VOTCA_BOT_TOKEN }} | docker login docker.pkg.github.com -u junghans --password-stdin
-      - name: Pull immage 
-        run: docker pull docker pull votca/votca:${{ github.event.inputs.tag }}
+      - name: Pull image 
+        run: docker pull votca/votca:${{ github.event.inputs.tag }}
       - name: Retag image
         run: docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
       - name: Push image
