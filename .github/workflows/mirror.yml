@@ -23,8 +23,9 @@ jobs:
         run: docker pull votca/votca:${{ github.event.inputs.tag }}
       - name: Retag image
         if: ${{ github.event.inputs.tag }}
-        run: docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
-        run: docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} registry.gitlab.com/votca/votca:${{ github.event.inputs.tag }}
+        run: |
+          docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
+          docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} registry.gitlab.com/votca/votca:${{ github.event.inputs.tag }}
       - name: Push image to Github
         if: ${{ github.event.inputs.tag }}
         run: docker push docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
