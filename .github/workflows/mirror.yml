@@ -14,9 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check tag
-        run: if [[ -z "${{ github.event.inputs.tag }}" ]]; then
-               exit 1
-             fi
+        run: |
+          if [[ -z "${{ github.event.inputs.tag }}" ]]; then
+            exit 1
+          fi
       - name: Login
         run: echo ${{ secrets.VOTCA_BOT_TOKEN }} | docker login docker.pkg.github.com -u junghans --password-stdin
       - name: Pull immage 
