@@ -13,22 +13,18 @@ jobs:
     if: github.repository_owner == 'votca'
     runs-on: ubuntu-latest
     steps:
-      - name: Login
-        if: ${{ github.event.inputs.tag }}
-        run: |
-          echo ${{ secrets.VOTCA_BOT_TOKEN }} | docker login docker.pkg.github.com -u votca-bot --password-stdin
-          echo ${{ secrets.GITLAB_REGISTRY_TOKEN }} | docker login docker.pkg.github.com -u votca-bot --password-stdin
       - name: Pull image 
         if: ${{ github.event.inputs.tag }}
         run: docker pull votca/votca:${{ github.event.inputs.tag }}
-      - name: Retag image
+      - name: Push image to Github
         if: ${{ github.event.inputs.tag }}
         run: |
           docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
-          docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} registry.gitlab.com/votca/votca:${{ github.event.inputs.tag }}
-      - name: Push image to Github
-        if: ${{ github.event.inputs.tag }}
-        run: docker push docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
+          echo ${{ secrets.VOTCA_BOT_TOKEN }} | docker login docker.pkg.github.com -u votca-bot --password-stdin
+          docker push docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
       - name: Push image to GitLab
         if: ${{ github.event.inputs.tag }}
-        run: docker push registry.gitlab.com/votca/votca:${{ github.event.inputs.tag }}
+        run: |
+          docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} registry.gitlab.com/votca/votca:${{ github.event.inputs.tag }}
+          echo ${{ secrets.GITLAB_REGISTRY_TOKEN }} | docker login docker.pkg.github.com -u votca-bot --password-stdin
+          docker push registry.gitlab.com/votca/votca:${{ github.event.inputs.tag }}
