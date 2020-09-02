@@ -16,12 +16,18 @@ jobs:
       - name: Pull image 
         if: ${{ github.event.inputs.tag }}
         run: docker pull votca/votca:${{ github.event.inputs.tag }}
-      - name: Push image to Github
+      - name: Push image to Github Package Registry
         if: ${{ github.event.inputs.tag }}
         run: |
           docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
           echo ${{ secrets.VOTCA_BOT_TOKEN }} | docker login docker.pkg.github.com -u votca-bot --password-stdin
           docker push docker.pkg.github.com/votca/votca/votca:${{ github.event.inputs.tag }}
+      - name: Push image to Github Container Registry
+        if: ${{ github.event.inputs.tag }}
+        run: |
+          docker tag docker.io/votca/votca:${{ github.event.inputs.tag }} ghcr.io/votca/votca:${{ github.event.inputs.tag }}
+          echo ${{ secrets.VOTCA_BOT_TOKEN }} | docker login ghcr.io -u votca-bot --password-stdin
+          docker push ghcr.io/votca/votca:${{ github.event.inputs.tag }}
       - name: Push image to GitLab
         if: ${{ github.event.inputs.tag }}
         run: |
